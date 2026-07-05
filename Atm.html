@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ATM Machine</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.atm {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 2px solid #0077b6;
+    border-radius: 8px;
+    text-align: center;
+    width: 400px;
+    height: 250px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.atm h1 {
+    color: #0077b6;
+}
+
+.atm input {
+    width: 90%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #0077b6;
+    border-radius: 4px;
+}
+
+.atm button {
+    background-color: #0077b6;
+    color: white;
+    border: none;
+    padding: 15px 55px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.atm button:hover {
+    background-color: #026c8a;
+}
+/* Full screen dark background overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Dim effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Keeps it on top */
+}
+
+/* White box holding the image */
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  max-width: 80%;
+}
+
+/* Close button (X) */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+
+#message {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+    
+    
+    </style> 
+</head>
+<body>
+    <div class="atm">
+        <h1>ATM Machine</h1>
+        <p>Current Balance: ₹<span id="balance">5000</span></p>
+        <input type="number" id="amount" placeholder="Enter Amount">
+        <br><br>
+        <button onclick="deposit()">Deposit</button>
+        <button onclick="withdraw()">Withdraw</button>
+        <p id="message"></p>
+        <!-- The Popup Overlay -->
+<div id="image-popup" class="popup-overlay" style="display: none;">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <img src="data:image/jpeg;base64,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" alt="Pop-up Image"/>
+  </div>
+</div>
+
+    </div>
+
+    <script>
+        let balance = 5000;
+
+        function deposit() {
+            let amount = Number(document.getElementById("amount").value);
+            if (amount > 0&&amount<100000) {
+                balance = balance + amount;
+                document.getElementById("balance").innerText = balance;
+                document.getElementById("message").innerText = "₹" + amount + " deposited successfully!";
+            } else if (amount>100000) {
+                document.getElementById('message').innerText = "HOSH ME AO ABHIJEET";
+                // Show the popup overlay
+                document.getElementById('image-popup').style.display = 'flex';
+            } else {
+                document.getElementById("message").innerText = "Enter a valid amount to deposit.";
+            }
+        }
+
+        // Function to close the popup when 'X' is clicked
+        function closePopup() {
+            document.getElementById('image-popup').style.display = 'none';
+        }
+
+        function withdraw() {
+            let amount = Number(document.getElementById("amount").value);
+            if (amount > 0 && amount <= balance) {
+                balance = balance - amount;
+                document.getElementById("balance").innerText = balance;
+                document.getElementById("message").innerText = "₹" + amount + " withdrawn successfully!";
+            } else if (amount > balance) {
+                document.getElementById("message").innerText = "Insufficient balance!";
+            } else {
+                document.getElementById("message").innerText = "Enter a valid amount to withdraw.";
+            }
+        }
+    </script>
+</body>
+</html>
